@@ -1,6 +1,7 @@
 import mdtraj as md
 import matplotlib.pyplot as plt
 from datetime import datetime
+import pandas as pd
 
 def create_timestamp() -> str:
   # helper function to create a unique timestamp
@@ -71,7 +72,7 @@ def run(trajectory_file, topology_file=None, residue1="", atom1="", residue2="",
 
     # draw figure
     filename = f"dist.{create_timestamp()}.svg"
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(10, 6))
     # update font size
     plt.rcParams.update({'font.size': 20})
     plt.plot(sim_time, dists)
@@ -79,7 +80,13 @@ def run(trajectory_file, topology_file=None, residue1="", atom1="", residue2="",
     plt.ylabel(f"$d$({residue1}-{atom1}, {residue2}-{atom2}) (Å)")
     plt.savefig(filename)
     print(f"Distance plot created as: {filename}")
-    return dists
+
+    # save numerical data
+    df = pd.Series(dists, name="Pairwise Distance")
+    csv_filename = f"dist.{create_timestamp()}.csv"
+    df.to_csv(csv_filename)
+    print(f"Distance values saved in: {csv_filename}")
 
 if __name__ == "__main__":
-    print(run('prod_align.xtc', 'prod_align.pdb', "142", "OE1", "600", "H35"))
+    print(run('../test_files/prod_align.xtc', '../test_files/prod_align.pdb', "142", "OE1", "600", "H35"))
+    # print(run('../test_files/6OIM_traj.xtc', '../test_files/6OIM_coord.pdb', "12", "SG", "338", "C25"))
