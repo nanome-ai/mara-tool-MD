@@ -3,6 +3,23 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import pandas as pd
 
+trajectory_file_supported_formats = [
+    ".binops",
+    ".lh5",
+    ".xml",
+    ".arc",
+    ".dcd",
+    ".dtr",
+    ".hdf5",
+    ".h5",
+    ".netcdf",
+    ".trr",
+    ".xtc",
+    ".prmtop",
+    ".xyz",
+    ".lammpstrj",
+    ".hoomdxml"]
+
 def create_timestamp() -> str:
   # helper function to create a unique timestamp
   dt = str(datetime.now())
@@ -22,6 +39,10 @@ def get_idx_from_resid(resid):
     return idx
 
 def run(trajectory_file, topology_file=None, residue1="", atom1="", residue2="", atom2=""):
+    # check trajectory file format
+    if "." not in trajectory_file or trajectory_file[trajectory_file.rfind("."):] not in trajectory_file_supported_formats:
+        raise RuntimeError("Unsupported trajectory file type! Please make sure the trajectory file is in one of the following formats: " + \
+                            ", ".join(trajectory_file_supported_formats))
     # load the trajectory
     try:
         traj = md.load(trajectory_file)
@@ -88,5 +109,6 @@ def run(trajectory_file, topology_file=None, residue1="", atom1="", residue2="",
     print(f"Distance values saved in: {csv_filename}")
 
 if __name__ == "__main__":
-    print(run('../test_files/prod_align.xtc', '../test_files/prod_align.pdb', "142", "OE1", "600", "H35"))
+    # print(run('../test_files/prod_align.xtc', '../test_files/prod_align.pdb', "142", "OE1", "600", "H35"))
     # print(run('../test_files/6OIM_traj.xtc', '../test_files/6OIM_coord.pdb', "12", "SG", "338", "C25"))
+    print(run('../save_pdb/trajectory.2024_09_19_20_20_05.049378.pdb', '../test_files/6OIM_coord.pdb', "12", "SG", "338", "C25"))
